@@ -41,7 +41,7 @@ func (m mainServer) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	//cut file into chunks here then make miniServers for each chunk
 	const chunkSize = 1 << 25
 	fileInfo, _ := file.Stat()
-	var fileSize int64 = fileInfo.Size()
+	fileSize := fileInfo.Size()
 	numOfParts := int(math.Ceil(float64(fileSize) / float64(chunkSize)))
 	_, _ = res.Write([]byte("port:" + strconv.FormatInt(int64(requestCounter*100), 10) + "parts:" + strconv.FormatInt(int64(numOfParts), 10)))
 	//client will repeatedly try to connect to port rC*100 + i for i th file part
@@ -62,5 +62,6 @@ func (m mainServer) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-
+	var server mainServer
+	_ = http.ListenAndServe(":1050", server)
 }
